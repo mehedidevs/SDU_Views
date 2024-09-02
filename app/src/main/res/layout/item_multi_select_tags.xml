@@ -13,11 +13,22 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:chipSpacingHorizontal="8dp"
-        app:chipSpacingVertical="8dp" />
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:singleLine="false"
+            app:singleSelection="false" />
+
+    </ScrollView>
+
 
 </LinearLayout>

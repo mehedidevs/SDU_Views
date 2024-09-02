@@ -17,19 +17,57 @@
         android:id="@+id/rangeSeekBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="8dp"
+
+            app:boxStrokeColor="#F6C5C5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtMin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="min"
+                android:inputType="number"
+                android:minHeight="38dp"
+                android:padding="8dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="8dp"
+            app:boxStrokeColor="#F6C5C5"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtMax"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="max"
+                android:inputType="number"
+                android:minHeight="38dp"
+                android:padding="8dp"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 
+    </LinearLayout>
 
-
-    <!--    <com.google.android.material.slider.RangeSlider-->
-    <!--        android:id="@+id/rangeSlider"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        app:valueFrom="0"-->
-    <!--        app:valueTo="100"-->
-    <!--        app:stepSize="1"-->
-    <!--        app:thumbRadius="12dp"-->
-    <!--        app:values="@array/initial_slider_values" />-->
 
 </LinearLayout>

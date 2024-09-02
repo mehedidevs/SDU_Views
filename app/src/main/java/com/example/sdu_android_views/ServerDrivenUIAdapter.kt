@@ -4,21 +4,19 @@ package com.example.sdu_android_views
 Created by Masum Mehedi on 9/1/2024.
 masumehedissl@gmail.com
  **/
-import android.content.res.ColorStateList
-import android.graphics.Color
+
+import android.animation.ValueAnimator
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.CheckBox
-import android.widget.LinearLayout
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources.getColorStateList
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
-
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sdu_android_views.databinding.ItemMultiColorSelectBinding
@@ -30,6 +28,7 @@ import com.example.sdu_android_views.databinding.ItemSingleSelectBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.slider.RangeSlider
+import com.google.gson.Gson
 
 
 class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UIDiffCallback()) {
@@ -49,17 +48,13 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
         return when (viewType) {
             0 -> MultiSelectViewHolder(
                 ItemMultiSelectBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 )
             )
 
             1 -> RangeViewHolder(
                 ItemPriceRangeBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 )
             )
 
@@ -73,9 +68,7 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
 
             3 -> SingleSelectViewHolder(
                 ItemSingleSelectBinding.inflate(
-                    LayoutInflater.from(parent.context),
-                    parent,
-                    false
+                    LayoutInflater.from(parent.context), parent, false
                 )
             )
 
@@ -127,6 +120,10 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 }
             }
 
+            binding.titleTextView.setOnClickListener {
+                binding.optionsLayout.toggleExpandCollapse()
+            }
+
 
         }
     }
@@ -145,13 +142,16 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 val rangeSlider = RangeSlider(binding.root.context).apply {
                     valueFrom = minPrice
                     valueTo = maxPrice
-                    setValues(20f, 80f) // Initial thumb positions
-                   // stepSize = 1f // Increment step size
-                    thumbRadius=20
-                    thumbHeight=40
-                    thumbStrokeColor= getColorStateList(binding.root.context, R.color.black)
-                    thumbStrokeWidth=1.0f
-                    trackHeight=10
+                    setValues(20f, 80f)
+                    thumbRadius = 20
+                    thumbHeight = 40
+                    thumbStrokeColor = getColorStateList(binding.root.context, R.color.black)
+                    thumbStrokeWidth = 1.0f
+                    trackHeight = 10
+                    stepSize=1f
+                    isTickVisible=false
+
+
 
                     // Customize the thumb and track color
                     trackActiveTintList =
@@ -165,23 +165,81 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                     // Handle slider value changes
                     val values = slider.values
                     println("Start: ${values[0]}, End: ${values[1]}")
+                    setMin(values[0].toInt())
+                    setMax(values[1].toInt())
                 }
 
                 // Add the RangeSlider to the layout
                 rangeSeekBarLayout.addView(rangeSlider)
+                titleTextView.setOnClickListener {
+                    rangeSeekBarLayout.toggleExpandCollapse()
+                }
 
 
             }
         }
+
+        private fun setMin(min: Int) {
+            binding.edtMin.setText(min.toString())
+        }
+
+        private fun setMax(max: Int) {
+            binding.edtMax.setText(max.toString())
+        }
+
     }
 
 
     class MultiColorSelectViewHolder(private val binding: ItemMultiColorSelectBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
+        private lateinit var recyclerView: RecyclerView
+        private lateinit var colorAdapter: ColorMultiSelectionAdapter
+        private val colors: MutableList<ColorItem> = mutableListOf()
 
         fun bind(item: UIElement.MultiColorSelect) {
+            colorAdapter = ColorMultiSelectionAdapter()
+            recyclerView = binding.recyclerView
+            var isRecyclerViewVisible = true
+            binding.apply {
+                titleTextView.text = item.title
+                titleTextView.setOnClickListener {
+                    if (isRecyclerViewVisible) {
+                        recyclerView.visibility = View.GONE
+                    } else {
+                        recyclerView.visibility = View.VISIBLE
+                    }
+                    isRecyclerViewVisible = !isRecyclerViewVisible
+                }
+            }
 
+
+
+            recyclerView.layoutManager = LinearLayoutManager(binding.root.context).apply {
+                orientation = LinearLayoutManager.HORIZONTAL
+
+            }
+            recyclerView.adapter = colorAdapter
+            item.options?.let { options ->
+                for (i in 0 until options.length()) {
+                    val colorJson = options.getJSONObject(i).toString()
+                    val gson = Gson()
+                    val colorItem: ColorItem = gson.fromJson(colorJson, ColorItem::class.java)
+
+                    colors.add(colorItem)
+                }
+
+
+                colorAdapter.submitList(colors)
+            }
+
+
+            colorAdapter.submitList(colors)
+
+
+
+            colorAdapter.setOnColorSelectedListener {
+
+            }
         }
     }
 
@@ -190,6 +248,12 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
         fun bind(item: UIElement.SingleSelect) {
             binding.apply {
                 titleTextView.text = item.title
+
+                titleTextView.setOnClickListener {
+                    radioGroup.toggleExpandCollapse()
+                }
+
+
                 radioGroup.removeAllViews()
                 item.options?.let { options ->
                     for (i in 0 until options.length()) {
@@ -207,10 +271,48 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
 
     class SingleColorSelectViewHolder(val binding: ItemSingleColorSelectBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
+        private lateinit var recyclerView: RecyclerView
+        private lateinit var colorAdapter: ColorSelectionAdapter
+        private val colors: MutableList<ColorItem> = mutableListOf()
         fun bind(item: UIElement.SingleColorSelect) {
+            colorAdapter = ColorSelectionAdapter()
+            recyclerView = binding.recyclerView
+            binding.titleTextView.text = item.title
+
+            // Initialize RecyclerView layout manager and adapter
+            recyclerView.layoutManager = LinearLayoutManager(binding.root.context).apply {
+                orientation = LinearLayoutManager.HORIZONTAL
+            }
+            recyclerView.adapter = colorAdapter
+
+            // Populate RecyclerView with data
+            val colors = mutableListOf<ColorItem>()
+            item.options?.let { options ->
+                for (i in 0 until options.length()) {
+                    val colorJson = options.getJSONObject(i).toString()
+                    val colorItem: ColorItem = Gson().fromJson(colorJson, ColorItem::class.java)
+                    colors.add(colorItem)
+                }
+                colorAdapter.submitList(colors)
+            }
+
+            var isRecyclerViewVisible = true
+            binding.apply {
+                titleTextView.text = item.title
+                titleTextView.setOnClickListener {
+                    if (isRecyclerViewVisible) {
+                        recyclerView.visibility = View.GONE
+                    } else {
+                        recyclerView.visibility = View.VISIBLE
+                    }
+                    isRecyclerViewVisible = !isRecyclerViewVisible
+                }
+            }
+
 
         }
+
+
     }
 
     class MultiSelectTagsViewHolder(binding: ItemMultiSelectTagsBinding) :
@@ -230,8 +332,13 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                         isCheckable = true
                     }
                     chipGroup.addView(chip)
+
                 }
             }
+            titleTextView.setOnClickListener {
+                chipGroup.toggleExpandCollapse()
+            }
+
         }
     }
 
@@ -244,5 +351,7 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
             return oldItem == newItem
         }
     }
+
+
 }
 
