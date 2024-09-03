@@ -22,35 +22,34 @@ import com.example.sdu_android_views.filters.RangeViewHolder
 import com.example.sdu_android_views.filters.SingleColorSelectViewHolder
 import com.example.sdu_android_views.filters.SingleSelectViewHolder
 
-
 class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UIDiffCallback()) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is UIElement.MultiSelect -> MultiSelect
-            is UIElement.PriceRange -> PriceRange
-            is UIElement.MultiColorSelect -> MultiColorSelect
-            is UIElement.SingleSelect -> SingleSelect
-            is UIElement.SingleColorSelect -> SingleColorSelect
-            is UIElement.MultiSelectTags -> MultiSelectTags
+            is UIElement.MultiSelect -> MULTI_SELECT
+            is UIElement.PriceRange -> PRICE_RANGE
+            is UIElement.MultiColorSelect -> MULTI_COLOR_SELECT
+            is UIElement.SingleSelect -> SINGLE_SELECT
+            is UIElement.SingleColorSelect -> SINGLE_COLOR_SELECT
+            is UIElement.MultiSelectTags -> MULTI_SELECT_TAGS
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            MultiSelect -> MultiSelectViewHolder(
+            MULTI_SELECT -> MultiSelectViewHolder(
                 ItemMultiSelectBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            PriceRange -> RangeViewHolder(
+            PRICE_RANGE -> RangeViewHolder(
                 ItemPriceRangeBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            MultiColorSelect -> MultiColorSelectViewHolder(
+            MULTI_COLOR_SELECT -> MultiColorSelectViewHolder(
                 ItemMultiColorSelectBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -58,13 +57,13 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 )
             )
 
-            SingleSelect -> SingleSelectViewHolder(
+            SINGLE_SELECT -> SingleSelectViewHolder(
                 ItemSingleSelectBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            SingleColorSelect -> SingleColorSelectViewHolder(
+            SINGLE_COLOR_SELECT -> SingleColorSelectViewHolder(
                 ItemSingleColorSelectBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -72,7 +71,7 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 )
             )
 
-            MultiSelectTags -> MultiSelectTagsViewHolder(
+            MULTI_SELECT_TAGS -> MultiSelectTagsViewHolder(
                 ItemMultiSelectTagsBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -107,13 +106,12 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
     }
 
     companion object {
-        const val MultiSelect = 0
-        const val PriceRange = 1
-        const val MultiColorSelect = 2
-        const val SingleSelect = 3
-        const val SingleColorSelect = 4
-        const val MultiSelectTags = 5
-
+        const val MULTI_SELECT = 0
+        const val PRICE_RANGE = 1
+        const val MULTI_COLOR_SELECT = 2
+        const val SINGLE_SELECT = 3
+        const val SINGLE_COLOR_SELECT = 4
+        const val MULTI_SELECT_TAGS = 5
     }
 
 
