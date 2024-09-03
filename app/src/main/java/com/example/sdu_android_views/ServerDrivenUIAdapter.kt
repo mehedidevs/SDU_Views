@@ -27,30 +27,30 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is UIElement.MultiSelect -> 0
-            is UIElement.PriceRange -> 1
-            is UIElement.MultiColorSelect -> 2
-            is UIElement.SingleSelect -> 3
-            is UIElement.SingleColorSelect -> 4
-            is UIElement.MultiSelectTags -> 5
+            is UIElement.MultiSelect -> MultiSelect
+            is UIElement.PriceRange -> PriceRange
+            is UIElement.MultiColorSelect -> MultiColorSelect
+            is UIElement.SingleSelect -> SingleSelect
+            is UIElement.SingleColorSelect -> SingleColorSelect
+            is UIElement.MultiSelectTags -> MultiSelectTags
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            0 -> MultiSelectViewHolder(
+            MultiSelect -> MultiSelectViewHolder(
                 ItemMultiSelectBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            1 -> RangeViewHolder(
+            PriceRange -> RangeViewHolder(
                 ItemPriceRangeBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            2 -> MultiColorSelectViewHolder(
+            MultiColorSelect -> MultiColorSelectViewHolder(
                 ItemMultiColorSelectBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -58,13 +58,13 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 )
             )
 
-            3 -> SingleSelectViewHolder(
+            SingleSelect -> SingleSelectViewHolder(
                 ItemSingleSelectBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
             )
 
-            4 -> SingleColorSelectViewHolder(
+            SingleColorSelect -> SingleColorSelectViewHolder(
                 ItemSingleColorSelectBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -72,7 +72,7 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
                 )
             )
 
-            5 -> MultiSelectTagsViewHolder(
+            MultiSelectTags -> MultiSelectTagsViewHolder(
                 ItemMultiSelectTagsBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -104,6 +104,16 @@ class ServerDrivenUIAdapter : ListAdapter<UIElement, RecyclerView.ViewHolder>(UI
         override fun areContentsTheSame(oldItem: UIElement, newItem: UIElement): Boolean {
             return oldItem == newItem
         }
+    }
+
+    companion object {
+        const val MultiSelect = 0
+        const val PriceRange = 1
+        const val MultiColorSelect = 2
+        const val SingleSelect = 3
+        const val SingleColorSelect = 4
+        const val MultiSelectTags = 5
+
     }
 
 
